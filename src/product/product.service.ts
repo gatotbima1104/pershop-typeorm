@@ -4,20 +4,40 @@ import { EditProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Role } from 'src/auth/role/roles.enum';
+
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectRepository(Product) private productEntity: Repository<Product>,
+    @InjectRepository(Product) private productEntity: Repository<Product>
   ) {}
 
   async create(dto: CreateProductDto) {
-    const product = this.productEntity.create({
-      name: dto.name,
-      price: dto.price,
-    });
-
-    return await this.productEntity.save(product);
+    try {
+      const duplicateProduct = await this.productEntity.findOne({
+        where:{
+          name: dto.name
+        }
+      })
+  
+      if(duplicateProduct){
+        return {
+          message: `Produk ${dto.name} has been taken`,
+        };
+      }
+  
+        const product = this.productEntity.create({
+          name: dto.name,
+          price: dto.price,
+        });
+  
+        return await this.productEntity.save(product); 
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findAll() {
@@ -36,25 +56,32 @@ export class ProductService {
   }
 
   async update(id: number, dto: EditProductDto) {
-    const productByID = await this.productEntity.findOne({ 
-      where: {
-          id,
-      }
-    })
-
-    if(!productByID){
-        throw new NotFoundException('product not found')
-    }
-
-    await this.productEntity.update({id}, {name: dto.name, price: dto.price})
-
-    const updatedProduct = await this.productEntity.findOne({
+    try {
+      const productByID = await this.productEntity.findOne({ 
         where: {
             id,
         }
-    })
-
-  return updatedProduct
+      })
+  
+      if(!productByID){
+          throw new NotFoundException('product not found')
+      }
+  
+      await this.productEntity.update({id}, {name: dto.name, price: dto.price})
+  
+      const updatedProduct = await this.productEntity.findOne({
+          where: {
+              id,
+          }
+      })
+  
+    return {
+      message: 'Product has been updated successfully',
+      updatedProduct
+    }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async remove(id: number) {
@@ -64,6 +91,10 @@ export class ProductService {
 
     if(!product){
         throw new NotFoundException('product not found')
+    }
+
+    return {
+      message: 'Product has been deleted'
     }
   }
 }

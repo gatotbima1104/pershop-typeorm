@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './product/entities/product.entity';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -16,7 +17,7 @@ import { User } from './user/entities/user.entity';
       database: 'pershop-typeorm-db',
       entities: [Product, User],
       synchronize: true,
-  }), UserModule],
+  }), UserModule, AuthModule],
   controllers: [],
   providers: [],
 })

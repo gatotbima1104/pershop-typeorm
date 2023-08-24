@@ -9,7 +9,7 @@ export class Product{
     @Column({ unique: true })
     name: string
 
-    @Column()
+    @Column({type: 'int'})
     price: number
 
     @Column({default: new Date()})
