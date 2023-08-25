@@ -14,4 +14,8 @@ export class Product{
 
     @Column({default: new Date()})
     createdAt: Date
+
+    authorId: number;
+
+    isPublished: boolean;
 }

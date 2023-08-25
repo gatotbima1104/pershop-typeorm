@@ -4,9 +4,6 @@ import { EditProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { Role } from 'src/auth/role/roles.enum';
-
 
 @Injectable()
 export class ProductService {
@@ -97,4 +94,5 @@ export class ProductService {
       message: 'Product has been deleted'
     }
   }
+
 }

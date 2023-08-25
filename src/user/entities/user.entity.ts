@@ -15,4 +15,6 @@ export class User{
 
     @Column({ type: 'enum', enum: Role, default: Role.Admin })
     role: string;
+
+    isAdmin: boolean
 }

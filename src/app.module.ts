@@ -5,10 +5,13 @@ import { Product } from './product/entities/product.entity';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { RolesGuard } from './auth/guard/role.guard';
+import { CaslModule } from './casl/casl.module';
 
 
 @Module({
-  imports: [ProductModule, TypeOrmModule.forRoot({
+  imports: [ProductModule, 
+    TypeOrmModule.forRoot({
     type: 'postgres',
       host: 'localhost',
       port: 5433,
@@ -17,8 +20,9 @@ import { AuthModule } from './auth/auth.module';
       database: 'pershop-typeorm-db',
       entities: [Product, User],
       synchronize: true,
-  }), UserModule, AuthModule],
+  }),
+   UserModule, AuthModule, CaslModule],
   controllers: [],
-  providers: [],
+  providers: [RolesGuard],
 })
 export class AppModule {}
