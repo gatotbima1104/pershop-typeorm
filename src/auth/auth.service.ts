@@ -1,5 +1,6 @@
 import {
-  ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,16 +9,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import * as argon from 'argon2';
-import { Role } from './role/roles.enum';
 import { JwtPayload } from './jwt/jwt.interface';
+import * as bcrypt from 'bcrypt'
+import { LoginUserDto } from 'src/user/dto/login.user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userEntity: Repository<User>,
     private jwtService: JwtService,
-    // private jwtPayload: JwtPayload,
   ) {}
 
   async registerUser(dto: CreateUserDto) {
@@ -28,16 +28,20 @@ export class AuthService {
     });
 
     if (duplicateUsername) {
-      return {
+      throw new HttpException({
         message: 'Username has been taken',
-      };
+        statusCode: 403,
+      }, HttpStatus.FORBIDDEN
+      )
     }
-    const hashedPassword = await argon.hash(dto.password);
+
+    const salt = await bcrypt.genSalt()
+    const hashedPassword = await bcrypt.hash(dto.password, salt)
 
     const user = this.userEntity.create({
+      name: dto.name,
       username: dto.username,
       password: hashedPassword,
-      // role: Role.Kasir
     });
 
     // add payload register jwt
@@ -53,56 +57,71 @@ export class AuthService {
     await this.userEntity.save(user);
 
     return{
-      // user,
+      message: 'you are registered',
       token_access
     }
     
   }
 
-  async loginUser(dto: CreateUserDto) {
-  
-    const {id, username, role, password} =
-
-     await this.userEntity.findOne({
+  async loginUser(dto: LoginUserDto) {
+    const user = await this.userEntity.findOne({
       where: { username: dto.username}
      });
 
-    if (!username) {
-      throw new NotFoundException('Username is Incorrect');
+    if (!user) {
+      throw new HttpException({
+        message: 'your username is incorrect',
+        statusCode: 404,
+      }, HttpStatus.NOT_FOUND
+      )
     }
 
-    const isMatch = await argon.verify(password, dto.password);
+    const isMatch = await this.validatePassword(dto.password, user.password)
 
-    if (isMatch) {
-      // throw new NotFoundException('Password is Incorrect');
-
-      const payload: JwtPayload = {
-          id,
-          role,
-        };
-
-        const user = await this.userEntity.findOne({
-          where: {
-            id
-          }
-        });
-
-        return {
-          access_token: this.jwtService.sign(payload),
-          user: user,
-        };
-
-
+    if(!isMatch) {
+      throw new HttpException({
+        message: 'your password is incorrect',
+        statusCode: 404,
+      }, HttpStatus.UNAUTHORIZED
+      )
     }
 
-    // const payload = {
-    //   id: user.id,
-    //   role: user.role,
-    //   username: user.username
-    // };
+    delete user.password
 
-    // return {
-    //   token: await this.jwtService.signAsync(payload),
-    // };
+    const payload: JwtPayload = {
+      id: user.id,
+      role: user.role
+    }
+
+    return {
+      token: this.jwtService.sign(payload),
+      user,
+    }
+
+
+    // if (isMatch) {
+    //   const payload: JwtPayload = {
+    //       id,
+    //       role,
+    //     };
+
+    //     const user = await this.userEntity.findOne({
+    //       where: {
+    //         id
+    //       }
+    //     });
+
+    //     delete user.password
+
+    //     return {
+    //       access_token: this.jwtService.sign(payload),
+    //       id: user.id,
+    //       username: user.username,
+    //     };
+    // }
+  }
+
+  async validatePassword(password: string, hashed: string){
+      return await bcrypt.compare(password, hashed)
   }
 }

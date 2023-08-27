@@ -13,7 +13,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: true,
   dropSchema: false,
-  logging: true,
+  // logging: true,
 };
 
 export const seedOrmConfig: TypeOrmModuleOptions = {

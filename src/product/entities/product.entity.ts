@@ -1,10 +1,11 @@
 import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity({ name: 'products'})
 export class Product{
 
-    @PrimaryGeneratedColumn({ type: 'int'})
-    id: number
+    @PrimaryGeneratedColumn('uuid')
+    id: string
 
     @Column({ unique: true })
     name: string
@@ -15,7 +16,7 @@ export class Product{
     @Column({default: new Date()})
     createdAt: Date
 
-    authorId: number;
+    authorId: string;
 
     isPublished: boolean;
 }

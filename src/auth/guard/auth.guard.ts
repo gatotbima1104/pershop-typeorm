@@ -39,7 +39,6 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
-    console.log('You are verified');
     return true;
   }
 

@@ -23,19 +23,19 @@ export class ProductController {
   @Get(':id')
   @Roles(Role.Admin)
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(Role.Admin)
   update(@Param('id') id: string, @Body() dto: EditProductDto) {
-    return this.productService.update(+id, dto);
+    return this.productService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles(Role.Admin)
   remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+    return this.productService.remove(id);
   }
 
 }

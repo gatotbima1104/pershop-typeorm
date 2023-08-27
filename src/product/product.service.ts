@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { EditProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,17 +42,23 @@ export class ProductService {
     return products;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const getProductByID = await this.productEntity.findOne({
       where: {
         id,
       },
     });
-
-    return getProductByID? getProductByID : new NotFoundException('product not found');
+  
+    if (!getProductByID) {
+      throw new HttpException({
+        message: 'Product Not Found',
+      }, HttpStatus.NOT_FOUND);
+    }
+  
+    return getProductByID;
   }
 
-  async update(id: number, dto: EditProductDto) {
+  async update(id: string, dto: EditProductDto) {
     try {
       const productByID = await this.productEntity.findOne({ 
         where: {
@@ -60,28 +66,40 @@ export class ProductService {
         }
       })
   
-      if(!productByID){
-          throw new NotFoundException('product not found')
+      if(!productByID) {
+        throw new HttpException({
+          message: "Product Not Found",
+          HttpStatusCode: 404
+        }, HttpStatus.NOT_FOUND
+        )
       }
   
-      await this.productEntity.update({id}, {name: dto.name, price: dto.price})
-  
+      await this.productEntity.update(id, {
+        ...productByID,
+        ...dto
+      })
+
+      // await this.productEntity.update(id, {
+      //   name: dto.name,
+      //   price: dto.price
+      // })
+
       const updatedProduct = await this.productEntity.findOne({
-          where: {
-              id,
-          }
+        where: {id}
       })
   
-    return {
-      message: 'Product has been updated successfully',
-      updatedProduct
-    }
+      return {
+        message: 'Product has been updated successfully',
+        updatedProduct
+      }
+      
     } catch (error) {
       console.log(error)
     }
+
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const product = await this.productEntity.delete({
       id,
     })

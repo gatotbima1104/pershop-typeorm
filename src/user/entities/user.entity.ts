@@ -1,11 +1,15 @@
 import { Role } from 'src/auth/role/roles.enum';
 import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity({ name: 'user'})
 export class User{
 
-    @PrimaryGeneratedColumn({ type: 'int'})
-    id: number
+    @PrimaryGeneratedColumn('uuid')
+    id: string
+
+    @Column()
+    name: string
 
     @Column({ unique: true })
     username: string
@@ -13,8 +17,8 @@ export class User{
     @Column()
     password: string
 
-    @Column({ type: 'enum', enum: Role, default: Role.Admin })
-    role: string;
+    @Column({ type: 'enum', enum: Role, default: Role.Kasir })
+    role: Role;
 
     isAdmin: boolean
 }
