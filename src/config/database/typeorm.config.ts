@@ -18,7 +18,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
 
 export const seedOrmConfig: TypeOrmModuleOptions = {
   ...typeOrmConfig,
-  logging: ['error', 'warn'],
+  // logging: ['error', 'warn'],
 };
 
 export default typeOrmConfig;
