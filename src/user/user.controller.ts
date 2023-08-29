@@ -3,6 +3,8 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Roles } from 'src/auth/role/roles.decorator';
+import { Role } from 'src/auth/role/roles.enum';
 
 
 @Controller('user')
@@ -11,6 +13,7 @@ export class UserController {
   
   // findAll(): Promise<User[]> {
   @Get()
+  @Roles(Role.Admin)
   findAll(){
     return this.userService.findAll();
   }
