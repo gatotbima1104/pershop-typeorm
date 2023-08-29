@@ -7,11 +7,12 @@ import { User } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { RolesGuard } from './auth/guard/role.guard';
 import { CaslModule } from './casl/casl.module';
+import { TransaksiModule } from './transaksi/transaksi.module';
 import typeOrmConfig from './config/database/typeorm.config';
 
 
 @Module({
-  imports: [ProductModule, TypeOrmModule.forRoot(typeOrmConfig) ,UserModule, AuthModule, CaslModule],
+  imports: [ProductModule, TypeOrmModule.forRoot(typeOrmConfig) ,UserModule, AuthModule, CaslModule, TransaksiModule],
   controllers: [],
   providers: [RolesGuard],
 })
