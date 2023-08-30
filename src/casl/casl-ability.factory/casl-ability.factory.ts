@@ -21,8 +21,8 @@ export class CaslAbilityFactory {
       can(Action.Read, 'all'); // read-only access to everything
     }
 
-    can(Action.Update, Product, { authorId: user.id });
-    cannot(Action.Delete, Product, { isPublished: true });
+    // can(Action.Update, Product, { authorId: user.id });
+    // cannot(Action.Delete, Product, { isPublished: true });
 
     return build({
       // Read https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types for details

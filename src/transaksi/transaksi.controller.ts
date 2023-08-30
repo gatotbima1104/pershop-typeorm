@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { TransaksiService } from './transaksi.service';
 import { CreateTransaksiDto } from './dto/create-transaksi.dto';
 import { UpdateTransaksiDto } from './dto/update-transaksi.dto';
 
+
 @Controller('transaksi')
 export class TransaksiController {
-  constructor(private readonly transaksiService: TransaksiService) {}
+  constructor(private readonly transaksiService: TransaksiService,
+    ) {}
 
   @Post()
-  create(@Body() createTransaksiDto: CreateTransaksiDto) {
-    return this.transaksiService.create(createTransaksiDto);
+  create(@Body() dtoCreate: CreateTransaksiDto, @Req() user) {
+    return this.transaksiService.create(user.id, dtoCreate);
   }
 
   @Get()
@@ -19,7 +21,7 @@ export class TransaksiController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.transaksiService.findOne(+id);
+    return this.transaksiService.findOne(id);
   }
 
   @Patch(':id')
@@ -29,6 +31,7 @@ export class TransaksiController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.transaksiService.remove(+id);
+    return this.transaksiService.remove(id);
   }
 }
+

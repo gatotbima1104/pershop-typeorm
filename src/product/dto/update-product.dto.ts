@@ -6,6 +6,12 @@ export class EditProductDto{
     name: string;
 
     @IsNotEmpty()
-    @IsInt()
+    // @IsInt()
     price: number;
+
+    @IsNotEmpty()
+    stock: number;
+
+    @IsNotEmpty()
+    category: string
 }

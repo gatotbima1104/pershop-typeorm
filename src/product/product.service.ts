@@ -4,11 +4,14 @@ import { EditProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { Transaksi } from 'src/transaksi/entities/transaksi.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectRepository(Product) private productEntity: Repository<Product>
+    @InjectRepository(Product) private productEntity: Repository<Product>,
+    @InjectRepository(Transaksi) private transaksiEntity: Repository<Transaksi>, 
+
   ) {}
 
   async create(dto: CreateProductDto) {
@@ -28,6 +31,8 @@ export class ProductService {
         const product = this.productEntity.create({
           name: dto.name,
           price: dto.price,
+          stock: dto.stock,
+          category: dto.category
         });
   
         return await this.productEntity.save(product); 
@@ -43,19 +48,18 @@ export class ProductService {
   }
 
   async findOne(id: string) {
-    const getProductByID = await this.productEntity.findOne({
-      where: {
-        id,
-      },
-    });
-  
-    if (!getProductByID) {
-      throw new HttpException({
-        message: 'Product Not Found',
-      }, HttpStatus.NOT_FOUND);
-    }
-  
-    return getProductByID;
+      const getProductByID = await this.productEntity.findOneBy({
+        id
+      })
+    
+      if (!getProductByID) {
+        throw new HttpException(
+          'Product Not Found',
+          HttpStatus.NOT_FOUND
+        );
+      }
+    
+      return getProductByID;
   }
 
   async update(id: string, dto: EditProductDto) {
@@ -111,6 +115,18 @@ export class ProductService {
     return {
       message: 'Product has been deleted'
     }
+  }
+
+  async findByCategory(category: string){
+    const product = await this.productEntity.createQueryBuilder('products')
+      .select('product')
+      .where('product.category :category', {category: category == 'tech'})
+      .getMany()
+    
+    if(!product){
+      throw new NotFoundException('category not found')
+    }                                            
+    return product                                            
   }
 
 }

@@ -6,11 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/role.guard';
+import { Transaksi } from 'src/transaksi/entities/transaksi.entity';
+import { TransaksiService } from 'src/transaksi/transaksi.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Product])],
+  imports:[TypeOrmModule.forFeature([Product, Transaksi, User])],
   controllers: [ProductController],
-  providers: [ProductService, 
+  providers: [ProductService, TransaksiService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard

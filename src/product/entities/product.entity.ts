@@ -1,5 +1,7 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid';
+import { Transaksi } from './../../transaksi/entities/transaksi.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity({ name: 'products'})
 export class Product{
@@ -16,7 +18,15 @@ export class Product{
     @Column({default: new Date()})
     createdAt: Date
 
-    authorId: string;
+    @Column({
+        type: 'int'
+    })
+    stock: number
 
-    isPublished: boolean;
+    @Column({nullable: true})
+    category?: string
+
+    @OneToMany(()=> Transaksi, (transaksi)=>transaksi.product)
+    transaksis: Transaksi[]
+    
 }

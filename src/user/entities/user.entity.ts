@@ -1,8 +1,10 @@
 import { Role } from 'src/auth/role/roles.enum';
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm'
 import { v4 as uuidv4 } from 'uuid';
+import { Transaksi } from 'src/transaksi/entities/transaksi.entity';
+import { Profile } from './user.profile.entity';
 
-@Entity({ name: 'user'})
+@Entity({ name: 'users'})
 export class User{
 
     @PrimaryGeneratedColumn('uuid')
@@ -21,4 +23,11 @@ export class User{
     role: Role;
 
     isAdmin: boolean
+
+    @OneToOne(()=> Profile)
+    @JoinColumn()
+    profile: Profile;
+
+    @OneToMany(()=> Transaksi, (transaksi)=>transaksi.user)
+    transaksis: Transaksi[];
 }
