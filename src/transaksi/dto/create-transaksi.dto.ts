@@ -10,3 +10,6 @@ export class CreateTransaksiDto {
     jumlahBeli: number
 
 }
+
+
+

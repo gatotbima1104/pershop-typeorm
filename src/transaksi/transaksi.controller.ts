@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TransaksiService } from './transaksi.service';
 import { CreateTransaksiDto } from './dto/create-transaksi.dto';
 import { UpdateTransaksiDto } from './dto/update-transaksi.dto';
+import { GetUser } from 'src/user/decorator/user.decorator';
 
 
 @Controller('transaksi')
@@ -10,7 +11,7 @@ export class TransaksiController {
     ) {}
 
   @Post()
-  create(@Body() dtoCreate: CreateTransaksiDto, @Req() user) {
+  create(@Body() dtoCreate: CreateTransaksiDto, @GetUser() user) {
     return this.transaksiService.create(user.id, dtoCreate);
   }
 

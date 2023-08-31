@@ -18,18 +18,17 @@ export class TransaksiService {
   async create(userId: string, dtoCreate: CreateTransaksiDto) {
     const {productId, jumlahBeli} = dtoCreate
 
-    const product = await this.productEntity.findOne({
-      where: {
-        id: productId,
-      }
-    })
-
     const user = await this.userEntity.findOne({
       where: {
         id: userId,
       }
     })
-    
+
+    const product = await this.productEntity.findOne({
+      where: {
+        id: productId,
+      }
+    })
     
     if(product.stock < jumlahBeli){
       throw new BadRequestException('Stock product tidak cukup')
@@ -44,12 +43,12 @@ export class TransaksiService {
       product,
       jumlahBeli,
       createdAt: new Date(),
-    })
+    } as DeepPartial <Transaksi>)
 
 
     product.stock -= jumlahBeli
 
-  await this.transaksiEntity.save(keranjang)
+  await this.transaksiEntity.save([keranjang])
   await this.productEntity.save(product);
 
 
@@ -59,6 +58,7 @@ export class TransaksiService {
     // product: transactionWithProduct
   }
   }
+
 
   async findAll() {
     // const transactions = await this.transaksiEntity
@@ -73,7 +73,7 @@ export class TransaksiService {
     // return transactions
 
     const transactions = await this.transaksiEntity.find({
-      relations: ['product'], // Include the 'products' relationship
+      relations: ['products', 'user'], // Include the 'products' relationship
     });
   
     if (!transactions) {

@@ -3,7 +3,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { EditProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Transaksi } from 'src/transaksi/entities/transaksi.entity';
 
 @Injectable()
@@ -118,9 +118,11 @@ export class ProductService {
   }
 
   async findByCategory(category: string){
+    // const product = await this.productEntity.find({ where: {category}})
+
     const product = await this.productEntity.createQueryBuilder('products')
-      .select('product')
-      .where('product.category :category', {category: category == 'tech'})
+      .select('products')
+      .where('products.category = :category', {category} )
       .getMany()
     
     if(!product){
@@ -128,5 +130,15 @@ export class ProductService {
     }                                            
     return product                                            
   }
+
+  async findProductInStock(){
+    return await this.productEntity.find({ where: { stock: MoreThan(0)}})
+  }
+
+  async findAllInStock() {
+    const products = await this.productEntity.find({ where: { stock: MoreThan(0)}});
+    return products;
+  }
+
 
 }

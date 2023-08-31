@@ -40,9 +40,14 @@ export class ProductController {
   }
 
 
-  @Get('category/tech')
-  category(@Query('category') category: string){
+  @Get('category/:category')
+  category(@Param('category') category: string){
     return this.productService.findByCategory(category)
+  }
+
+  @Get('ada')
+  findAllInStock() {
+    return this.productService.findAllInStock();
   }
 
 }

@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import {Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid';
 import { Transaksi } from './../../transaksi/entities/transaksi.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -26,7 +26,12 @@ export class Product{
     @Column({nullable: true})
     category?: string
 
-    @OneToMany(()=> Transaksi, (transaksi)=>transaksi.product)
-    transaksis: Transaksi[]
+    // @OneToMany(()=> Transaksi, (transaksi)=>transaksi.product)
+    // transaksis: Transaksi[]
+
+    @ManyToMany(() => Transaksi, (transaksi) => transaksi.products)
+    transaksis: Transaksi[];
     
+    // @ManyToMany(()=> Transaksi)
+    // transaksis: Transaksi[] 
 }
