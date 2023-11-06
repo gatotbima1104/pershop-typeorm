@@ -97,28 +97,6 @@ export class AuthService {
       token: this.jwtService.sign(payload),
       user,
     }
-
-
-    // if (isMatch) {
-    //   const payload: JwtPayload = {
-    //       id,
-    //       role,
-    //     };
-
-    //     const user = await this.userEntity.findOne({
-    //       where: {
-    //         id
-    //       }
-    //     });
-
-    //     delete user.password
-
-    //     return {
-    //       access_token: this.jwtService.sign(payload),
-    //       id: user.id,
-    //       username: user.username,
-    //     };
-    // }
   }
 
   async validatePassword(password: string, hashed: string){

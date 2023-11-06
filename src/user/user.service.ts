@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProfileDto } from './dto/user.profile.dto';
 import { Profile } from './entities/user.profile.entity';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,37 @@ export class UserService {
 
   async findAll() {
     return await this.userEntity.find({relations: ['profile', 'transaksis']})
+  }
+
+  async createUser(dto: CreateUserDto){
+    const userId = await this.userEntity.findOne({
+      where: {
+        name: dto.name
+      }
+    })
+
+    if(userId){
+      throw new HttpException({
+        statusCode: HttpStatus.NOT_ACCEPTABLE,
+        message: "User is already exist !!"
+      }, HttpStatus.NOT_ACCEPTABLE)
+    }
+
+    const salt = await bcrypt.genSalt()
+    const hashedPassword = await bcrypt.hash(dto.password, salt)
+
+    const user = this.userEntity.create({
+      ...dto,
+      password: hashedPassword
+    })
+
+    await this.userEntity.save(user)
+
+    delete user.password
+    return{
+      message: "User Created Successfully!!",
+      user
+    }
   }
 
   async findOne(id: string) {

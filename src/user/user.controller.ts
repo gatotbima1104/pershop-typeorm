@@ -39,4 +39,9 @@ export class UserController {
   createUserProfile(@Param('id') id: string, @Body() dto: UserProfileDto) {
     return this.userService.userProfile(id, dto)
   }
+
+  @Post()
+  createUser(@Body() dto: CreateUserDto){
+    return this.userService.createUser(dto)
+  }
 }
